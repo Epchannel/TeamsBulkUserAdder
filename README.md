@@ -78,7 +78,7 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã đáp ứng các yêu c�
 
 ### 5. ▶️ Chạy Script
 
-Chạy script bằng cách dán nội dung bạn vừa soạn vào PowerShell và chạy nó:
+Chạy script bằng cách dán nội dung bạn vừa soạn vào PowerShell và chạy chương trình bằng phím Enter. Chờ đến khi PowerShell chạy xong thì thoát chương trình.
 
 ### 6. ✅ Kiểm Tra
 
