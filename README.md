@@ -1,99 +1,117 @@
-# 🚀 Công Cụ Thêm Thành Viên Hàng Loạt Cho Microsoft Teams
 
-Repo này chứa một script PowerShell giúp bạn thêm nhiều thành viên vào một nhóm Microsoft Teams bằng cách đọc địa chỉ email từ một tệp văn bản.
+# 📘 Microsoft Teams Member Adder
 
-## 📋 Yêu Cầu
+Một ứng dụng GUI đơn giản giúp bạn thêm thành viên vào nhóm Microsoft Teams từ danh sách mã sinh viên. Ứng dụng hỗ trợ dán mã sinh viên, chuyển đổi thành email, và thêm vào nhóm chỉ trong vài bước.
 
-Trước khi bắt đầu, hãy đảm bảo bạn đã đáp ứng các yêu cầu sau:
+---
 
-- 🖥️ Bạn đã cài đặt **PowerShell** trên máy tính Windows của mình.
-- 👤 Bạn có quyền cần thiết (Owner hoặc Admin) để thêm thành viên vào một nhóm Microsoft Teams.
-- 🔑 Bạn có một tài khoản Microsoft Teams đang hoạt động.
-- 📦 Bạn đã cài đặt **Microsoft Teams PowerShell module**. Bạn có thể cài đặt bằng cách chạy lệnh sau trong PowerShell:
+## 🛠️ **Tính Năng**
 
-  ```powershell
-  Install-Module -Name PowerShellGet -Force -AllowClobber
-  Install-Module -Name MicrosoftTeams -Force -AllowClobber
-  ```
+1. **Nhập URL Nhóm Teams:**
+   - Cho phép dán URL từ clipboard.
+   - Tự động trích xuất `groupId` và `tenantId` từ URL.
 
-## 🛠️ Hướng Dẫn Sử Dụng
+2. **Nhập Mã Sinh Viên:**
+   - Dán danh sách mã sinh viên trực tiếp.
+   - Tự động chuyển đổi thành email dạng `xxx@student.humg.edu.vn`.
+   - Hỗ trợ **Ctrl+A** và nút **Xóa Dữ Liệu**.
 
-### 1. 📑 Chuẩn Bị Danh Sách Email
+3. **Thêm Thành Viên:**
+   - Gửi danh sách email đến nhóm Microsoft Teams.
+   - Hiển thị thông báo trạng thái thêm thành viên thành công.
 
-1. Tạo một tệp văn bản (`emails.txt`) chứa các địa chỉ email của người dùng mà bạn muốn thêm vào nhóm Microsoft Teams.
-2. Mỗi địa chỉ email nên được đặt trên một dòng riêng biệt. Ví dụ:
+4. **Giao Diện Thân Thiện:**
+   - Giao diện hiện đại với **ttkbootstrap**.
+   - Hiển thị logo ở cuối giao diện.
 
+---
+
+## 📋 **Yêu Cầu**
+
+1. **Hệ Điều Hành:** Windows.  
+2. **Quyền Hạn:** Tài khoản Microsoft Teams có quyền Admin nhóm.  
+3. **Môi Trường:** Không cần cài đặt Python, chỉ cần chạy file `.exe`.
+
+---
+
+## 🚀 **Hướng Dẫn Sử Dụng**
+
+### **1️⃣ Tải Về Ứng Dụng**
+
+- Tải file `TeamsAdder.zip` từ [Google Drive](#).
+- Giải nén file vào một thư mục.
+
+### **2️⃣ Chạy Ứng Dụng**
+
+- Mở file `app.exe`.
+
+### **3️⃣ Sử Dụng**
+
+1. **Dán URL Nhóm Teams:**
+   - Sao chép URL nhóm từ Microsoft Teams.
+   - Dán vào ô "URL Nhóm Teams".
+
+   Ví dụ URL:
    ```
-   2xxxx@student.humg.edu.vn
-   2xxxx@student.humg.edu.vn
-   2xxxx@student.humg.edu.vn
-   ```
-
-3. Lưu tệp ở một thư mục dễ truy cập, ví dụ: `C:\Users\Administrator\Downloads\`.
-
-### 2. 🔍 Cách Lấy ID Nhóm (Group ID)
-
-1. Truy cập Microsoft Teams và mở nhóm mà bạn muốn thêm thành viên.
-2. Nhìn vào thanh địa chỉ URL của trình duyệt, bạn sẽ thấy một phần chứa `groupId`. Ví dụ:
-   ```
-   https://teams.microsoft.com/l/team/19%3Aexample%40thread.tacv2/conversations?groupId=abc123-def456-gh789&tenantId=xyz
-   ```
-3. Phần `groupId` trong URL chính là ID của nhóm. Sao chép đoạn ID này.
-
-### 3. 🖥️ Sử Dụng PowerShell
-
-1. Mở PowerShell trên máy tính của bạn.
-
-2. Kết nối với tài khoản Microsoft Teams bằng lệnh sau:
-   ```powershell
-   Connect-MicrosoftTeams
-   ```
-   Một cửa sổ đăng nhập sẽ xuất hiện. Đăng nhập bằng tài khoản Microsoft Teams có quyền cần thiết để thêm thành viên vào nhóm.
-
-### 4. ✍️ Viết Script Để Thêm Thành Viên
-
-1. Tạo một script trên trình Editor (dùng Notepad cho nhanh) với nội dung như sau:
-
-   ```powershell
-   $emails = Get-Content "duong_dan_file_emails"
-   $groupId = "id_group_ban_can_them"
-   # Vai trò của thành viên (Member hoặc Owner)
-   $role = "Member"  # Hoặc "Owner"
-   foreach ($email in $emails) {
-       Add-TeamUser -GroupId $groupId -User $email -Role $role
-   }
+   https://teams.microsoft.com/l/team/19%3ApMEo98y41F1jZ1J1V8AElvzr-IztEwmiYnRdGCK6-Lg1%40thread.tacv2/conversations?groupId=abc123-def456&tenantId=xyz789
    ```
 
-2. Thay thế `"duong_dan_file_emails"` bằng đường dẫn đến tệp `emails.txt` của bạn. Ví dụ:
-   ```powershell
-   $emails = Get-Content "C:\Users\Administrator\Downloads\emails.txt"
+2. **Nhập Mã Sinh Viên:**
+   - Sao chép danh sách mã sinh viên từ Excel hoặc tài liệu.
+   - Dán vào bảng nhập liệu. Mỗi dòng chứa một mã sinh viên.
+
+   Ví dụ:
+   ```
+   2121051019
+   2121051020
+   2121051021
    ```
 
-3. Thay thế `"id_group_ban_can_them"` bằng `groupId` mà bạn đã sao chép ở bước trước. Ví dụ:
-   ```powershell
-   $groupId = "b2781ca1-60ba-4b7d-9a2e-5d1840621718"
-   ```
+3. **Thêm Thành Viên:**
+   - Nhấn nút "🚀 Thêm Thành Viên".
+   - Ứng dụng sẽ tự động chuyển mã sinh viên thành email và thêm vào nhóm.
 
-4. Nếu cần, thay đổi `$role` thành `"Owner"` nếu bạn muốn thêm thành viên với quyền Owner.
+4. **Xóa Dữ Liệu:**
+   - Sử dụng nút "🗑️ Xóa" để xóa URL.
+   - Sử dụng nút "🗑️ Xóa Dữ Liệu" để xóa bảng mã sinh viên.
 
-### 5. ▶️ Chạy Script
+---
 
-Chạy script bằng cách dán nội dung bạn vừa soạn vào PowerShell và chạy chương trình bằng phím Enter. Chờ đến khi PowerShell chạy xong thì thoát chương trình.
+## 🛠️ **Cách Hoạt Động**
 
-### 6. ✅ Kiểm Tra
+1. **Trích Xuất `groupId` và `tenantId`:**
+   - Ứng dụng sử dụng regex để lấy thông tin từ URL nhóm.
 
-Sau khi script hoàn tất, bạn có thể kiểm tra lại trong Microsoft Teams để đảm bảo rằng các thành viên đã được thêm vào nhóm.
+2. **Xác Thực Device Code:**
+   - Yêu cầu đăng nhập qua [Device Login](https://microsoft.com/devicelogin).
 
-## 🛠️ Khắc Phục Sự Cố
+3. **Thêm Thành Viên Qua API:**
+   - Gửi danh sách email đến Microsoft Teams qua Microsoft Graph API.
 
-Nếu bạn gặp phải vấn đề:
+---
 
-- 🔍 Đảm bảo rằng các địa chỉ email trong `emails.txt` là chính xác.
-- 🔍 Kiểm tra lại `groupId` có đúng không.
-- 🔍 Đảm bảo rằng bạn có quyền cần thiết để thêm thành viên vào nhóm.
+## 📦 **Phân Phối**
 
-Nếu gặp phải các vấn đề khác, bạn có thể mở một issue trong repo này để được hỗ trợ.
+1. **File Phân Phối:** `app.exe` (đóng gói với PyInstaller).  
+2. **Tệp Đính Kèm:** `logo.png` (nếu có).  
+3. **Tài Liệu Hướng Dẫn:** `README.md`.
 
-## 📄 Giấy Phép
+---
 
-Dự án này được cấp phép dưới giấy phép MIT - xem tệp [LICENSE](LICENSE) để biết thêm chi tiết.
+## 🛡️ **Hỗ Trợ**
+
+Nếu gặp lỗi hoặc cần hỗ trợ, vui lòng liên hệ:
+
+- **Email:** phamhonghiep.humg@gmail.com  
+- **GitHub:** [GitHub Repository](#)
+
+---
+
+## 🛑 **Cảnh Báo**
+
+- Đảm bảo bạn có quyền Admin nhóm trước khi sử dụng ứng dụng.  
+- Không chia sẻ token hoặc thông tin xác thực với bất kỳ ai.  
+
+---
+
+**✨ Chúc bạn sử dụng ứng dụng hiệu quả! ✨**
