@@ -62,9 +62,9 @@ Một ứng dụng GUI đơn giản giúp bạn thêm thành viên vào nhóm Mi
 
    Ví dụ:
    ```
-   2121051019
-   2121051020
-   2121051021
+   2121051xxx
+   2121051xxx
+   2121051xxx
    ```
 
 3. **Thêm Thành Viên:**
