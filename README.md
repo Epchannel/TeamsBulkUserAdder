@@ -24,9 +24,9 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã đáp ứng các yêu c�
 2. Mỗi địa chỉ email nên được đặt trên một dòng riêng biệt. Ví dụ:
 
    ```
-   user1@example.com
-   user2@example.com
-   user3@example.com
+   2xxxx@student.humg.edu.vn
+   2xxxx@student.humg.edu.vn
+   2xxxx@student.humg.edu.vn
    ```
 
 3. Lưu tệp ở một thư mục dễ truy cập, ví dụ: `C:\Users\Administrator\Downloads\`.
