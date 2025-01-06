@@ -38,12 +38,12 @@ Một ứng dụng GUI đơn giản giúp bạn thêm thành viên vào nhóm Mi
 
 ### **1️⃣ Tải Về Ứng Dụng**
 
-- Tải file `TeamsAdder.zip` từ [Google Drive](#).
+- Tải file `TeamsBulkUserAdder-2.0.0.zip`.
 - Giải nén file vào một thư mục.
 
 ### **2️⃣ Chạy Ứng Dụng**
 
-- Mở file `app.exe`.
+- Mở file `Tool-add-Teams.exe`.
 
 ### **3️⃣ Sử Dụng**
 
@@ -92,7 +92,7 @@ Một ứng dụng GUI đơn giản giúp bạn thêm thành viên vào nhóm Mi
 
 ## 📦 **Phân Phối**
 
-1. **File Phân Phối:** `app.exe` (đóng gói với PyInstaller).  
+1. **File Phân Phối:** `Tool-add-Teams.exe` (đóng gói với PyInstaller).  
 2. **Tệp Đính Kèm:** `logo.png` (nếu có).  
 3. **Tài Liệu Hướng Dẫn:** `README.md`.
 
