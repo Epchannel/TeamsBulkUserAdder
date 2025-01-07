@@ -9,7 +9,7 @@ import json
 import re
 import webbrowser
 import pyperclip  # pip install pyperclip
-
+import time
 # ----------------- CẤU HÌNH -----------------
 TOKEN_CACHE_FILE = 'token_cache.json'
 EMAIL_DOMAIN = "@student.humg.edu.vn"
@@ -76,7 +76,21 @@ def get_access_token(tenant_id):
         raise Exception(f"❌ Authentication failed: {result.get('error_description')}")
 
 # ----------------- THÊM THÀNH VIÊN VÀO NHÓM -----------------
-def add_member_to_group(email, access_token, group_id):
+def add_member_to_group(email, access_token, group_id, delay=0.5, retry_delay=60, max_retries=3):
+    """
+    Thêm thành viên vào nhóm Microsoft Teams với xử lý lỗi TooManyRequests.
+    
+    Args:
+        email (str): Địa chỉ email của thành viên.
+        access_token (str): Token xác thực.
+        group_id (str): ID của nhóm Teams.
+        delay (float): Thời gian chờ giữa mỗi lần thêm (đơn vị: giây).
+        retry_delay (int): Thời gian chờ khi gặp lỗi TooManyRequests (đơn vị: giây).
+        max_retries (int): Số lần thử lại tối đa khi gặp lỗi TooManyRequests.
+    
+    Returns:
+        str: 'added' nếu thêm thành công, 'exists' nếu người dùng đã tồn tại, 'failed' nếu lỗi khác.
+    """
     url = f"https://graph.microsoft.com/v1.0/groups/{group_id}/members/$ref"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -85,8 +99,33 @@ def add_member_to_group(email, access_token, group_id):
     payload = {
         "@odata.id": f"https://graph.microsoft.com/v1.0/users/{email}"
     }
-    response = requests.post(url, headers=headers, json=payload)
-    return response.status_code in [200, 204, 201]
+    
+    retries = 0
+    while retries <= max_retries:
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code in [200, 204, 201]:
+            print(f"[SUCCESS] Đã thêm {email} vào nhóm.")
+            time.sleep(delay)  # Nghỉ giữa các lần thêm
+            return 'added'
+        
+        elif response.status_code == 400 and "already exist" in response.text:
+            print(f"[INFO] Người dùng {email} đã tồn tại trong nhóm, bỏ qua.")
+            time.sleep(delay)
+            return 'exists'
+        
+        elif response.status_code == 429:  # TooManyRequests
+            print(f"[WARNING] Quá nhiều yêu cầu. Chờ {retry_delay} giây trước khi thử lại.")
+            time.sleep(retry_delay)
+            retries += 1
+        
+        else:
+            print(f"[ERROR] Không thể thêm {email}. Chi tiết: {response.text}")
+            time.sleep(delay)
+            return 'failed'
+    
+    print(f"[ERROR] Quá nhiều lần thử lại không thành công cho {email}.")
+    return 'failed'
 
 # ----------------- GUI TKINTER -----------------
 class TeamsApp:
@@ -153,6 +192,9 @@ class TeamsApp:
         return 'break'
     
     def start_process(self):
+        """
+        Hàm bắt đầu quy trình thêm thành viên với độ trễ và xử lý lỗi TooManyRequests.
+        """
         try:
             url = self.url_entry.get()
             if not url:
@@ -164,15 +206,33 @@ class TeamsApp:
             emails = [f"{sid.strip()}{EMAIL_DOMAIN}" for sid in student_ids if sid.strip()]
             
             success_count = 0
-            for email in emails:
-                if email and add_member_to_group(email, access_token, group_id):
-                    success_count += 1
+            exists_count = 0
+            failed_count = 0
             
-            self.status_label.config(text=f"✅ Thêm {success_count} thành viên thành công!")
-            messagebox.showinfo("Hoàn Thành", f"Đã thêm {success_count} thành viên thành công!")
+            with open("already_exists.log", "w") as exists_log, open("failed_additions.log", "w") as failed_log:
+                for email in emails:
+                    status = add_member_to_group(email, access_token, group_id, delay=0.5, retry_delay=60, max_retries=3)
+                    if status == 'added':
+                        success_count += 1
+                    elif status == 'exists':
+                        exists_count += 1
+                        exists_log.write(f"{email}\n")
+                    else:
+                        failed_count += 1
+                        failed_log.write(f"{email}\n")
+            
+            self.status_label.config(
+                text=f"✅ Thêm thành công: {success_count}, ⚠️ Đã tồn tại: {exists_count}, ❌ Lỗi: {failed_count}"
+            )
+            messagebox.showinfo(
+                "Hoàn Thành", 
+                f"Thêm thành công: {success_count}\nĐã tồn tại: {exists_count}\nLỗi: {failed_count}"
+            )
         except Exception as e:
             self.status_label.config(text=str(e))
             messagebox.showerror("Lỗi", str(e))
+
+
     
     def load_logo(self):
         try:
